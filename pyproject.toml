@@ -27,15 +27,39 @@ classifiers = [
 ]
 
 dependencies = [
+    # Core dependencies (always required)
     "librosa",
-    "torchaudio",
     "torch",
     "tqdm",
     "tiktoken",
-    "triton>=2.0.0",
 ]
 
 [project.optional-dependencies]
+# Whisper STT with VAC (recommended for most users)
+whisper = [
+    "torchaudio",  # For Silero VAD
+    "triton>=2.0.0; platform_system=='Linux' and platform_machine=='x86_64'",  # CUDA acceleration (has CPU fallback)
+]
+
+# Translation cascade with EuroLLM (for IWSLT-style workflows)
+translate = [
+    "torchaudio",
+    "triton>=2.0.0; platform_system=='Linux' and platform_machine=='x86_64'",
+    "ctranslate2",  # For EuroLLM inference
+    "transformers",  # For tokenization
+    "sentencepiece",  # For tokenizers
+]
+
+# All features
+all = [
+    "torchaudio",
+    "triton>=2.0.0; platform_system=='Linux' and platform_machine=='x86_64'",
+    "ctranslate2",
+    "transformers",
+    "sentencepiece",
+]
+
+# Development dependencies
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",

@@ -24,22 +24,52 @@ Simultaneous Shared Task.
 
 ## Installation
 
-The direct speech-to-text Whisper part can be installed with
+SimulStreaming supports multiple installation modes via optional dependencies:
 
+**1. Core Installation (Minimal)**
+```bash
+pip install -e .
 ```
+Includes only core dependencies. Use for lightweight integrations.
+
+**2. Whisper with VAC (Recommended)**
+```bash
+pip install -e ".[whisper]"
+```
+Adds voice activity detection (VAC) and CUDA acceleration. Recommended for most users.
+
+**3. Translation Cascade with EuroLLM**
+```bash
+pip install -e ".[translate]"
+```
+Adds CTranslate2, transformers, and sentencepiece for LLM translation. Use for IWSLT-style workflows.
+
+**4. All Features**
+```bash
+pip install -e ".[all]"
+```
+Includes all optional dependencies.
+
+**5. Development Mode**
+```bash
+pip install -e ".[whisper,dev]"
+```
+Adds pytest and coverage tools for testing.
+
+**Legacy Installation (requirements.txt)**
+
+For backwards compatibility:
+```bash
 pip install -r requirements.txt
 ```
+This installs the whisper extras (torchaudio + triton).
 
-The comments in `requirements.txt` document the origin of dependencies. There is originally WhisperStreaming code inserted in the `whisper_streaming` dir. It is simplified and refactored.
-Simul-Whisper code is in `simul_whisper`, it includes the [original Whisper](https://github.com/openai/whisper) code adapted for SimulWhisper in `simul_whispre/whisper`.
+**Architecture Notes**
 
-**Lighter installation**
-
-For slightly lighter installation,  remove `torchaudio` from `requirements.txt`. Then you can not use the Silero VAD controller (`--vac` option).
-
-**Text-to-Text Translation**
-
-Follow [translate/README.txt](translate/README.txt).
+- WhisperStreaming code is in `whisper_streaming/` (simplified and refactored)
+- Simul-Whisper code is in `simul_whisper/`
+- Original Whisper code (adapted) is in `simul_whisper/whisper/`
+- Translation cascade code is in `translate/` (see [translate/README.txt](translate/README.txt))
 
 ## Usage 
 

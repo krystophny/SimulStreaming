@@ -24,31 +24,67 @@ The system can optionally cascade with EuroLLM machine translation using LocalAg
 
 ## Installation and Dependencies
 
-### Development Installation
+### Installation Options
 
-For development with testing:
-```bash
-pip install -e ".[dev]"
-```
+SimulStreaming supports multiple installation modes depending on your use case:
 
-For regular installation:
+**1. Core Installation (Minimal)**
 ```bash
 pip install -e .
 ```
+Includes only core dependencies (torch, librosa, tqdm, tiktoken). Use for:
+- Lightweight speech-to-text without VAC
+- Custom integrations where you manage dependencies
 
-Or using requirements.txt:
+**2. Whisper with VAC (Recommended)**
 ```bash
-pip install -r requirements.txt
+pip install -e ".[whisper]"
 ```
+Adds torchaudio (for Silero VAD) and triton (for CUDA acceleration with CPU fallback). Use for:
+- Real-time transcription/translation with voice activity detection
+- Most production use cases
+- Microphone streaming applications
 
-Dependencies:
-- **torch**: Core ML framework (from SimulWhisper)
-- **librosa**: Audio processing (WhisperStreaming)
-- **torchaudio**: Required for Silero VAD (`--vac` option). Can be removed for lighter installation if VAD not needed.
-- **tqdm, tiktoken**: From Whisper
-- **triton>=2.0.0**: Required by both Whisper and SimulWhisper
+**3. Translation Cascade with EuroLLM**
+```bash
+pip install -e ".[translate]"
+```
+Adds CTranslate2, transformers, and sentencepiece for LLM translation. Use for:
+- IWSLT-style evaluation workflows
+- Speech-to-text followed by text-to-text translation
+- Multi-language translation pipelines
 
-Development dependencies (included in `[dev]`):
+**4. All Features**
+```bash
+pip install -e ".[all]"
+```
+Includes all optional dependencies.
+
+**5. Development Mode**
+```bash
+pip install -e ".[whisper,dev]"
+```
+Adds pytest and coverage tools for testing.
+
+### Core Dependencies (Always Required)
+
+- **torch**: Core ML framework
+- **librosa**: Audio processing
+- **tqdm**: Progress bars
+- **tiktoken**: Tokenization
+
+### Optional Dependencies
+
+**`[whisper]` extra:**
+- **torchaudio**: Silero VAD for voice activity detection
+- **triton>=2.0.0**: CUDA acceleration (Linux x86_64 only, has CPU fallback)
+
+**`[translate]` extra:**
+- **ctranslate2**: Fast inference for EuroLLM
+- **transformers**: Model loading and tokenization
+- **sentencepiece**: Tokenizer support
+
+**`[dev]` extra:**
 - **pytest>=7.0**: Testing framework
 - **pytest-cov>=4.0**: Coverage reporting
 - **pytest-timeout>=2.1**: Test timeouts
