@@ -30,14 +30,10 @@ def test_median_filter_cuda_fallback(sample_torch_audio, cuda_available):
     # Should not raise, should fall back to CPU if triton fails
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")  # Ignore CUDA capability warnings
-        try:
-            result = median_filter(x, filter_width=5)
-            assert result is not None
-            assert result.shape[0] == x.shape[0]
-            assert result.shape[1] == x.shape[1]
-        except Exception as e:
-            # Expected to fail on incompatible CUDA devices
-            pytest.skip(f"CUDA fallback failed (expected on incompatible GPU): {e}")
+        result = median_filter(x, filter_width=5)
+        assert result is not None
+        assert result.shape[0] == x.shape[0]
+        assert result.shape[1] == x.shape[1]
 
 
 def test_dtw_cpu(sample_torch_audio):
@@ -66,14 +62,25 @@ def test_dtw_cuda_fallback(sample_torch_audio, cuda_available):
     # Should not raise, should fall back to CPU if triton fails
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")  # Ignore CUDA capability warnings
-        try:
-            result = dtw(x)
-            assert result is not None
-            assert result.shape[0] == 2
-            assert result.shape[1] > 0
-        except Exception as e:
-            # Expected to fail on incompatible CUDA devices
-            pytest.skip(f"CUDA fallback failed (expected on incompatible GPU): {e}")
+        result = dtw(x)
+        assert result is not None
+        assert result.shape[0] == 2
+        assert result.shape[1] > 0
+
+
+def test_triton_ops_direct():
+    """Test triton_ops directly to catch API incompatibilities."""
+    pytest.importorskip("triton")
+
+    from simul_whisper.whisper.triton_ops import median_kernel
+    import triton
+
+    # This should work with both Triton 2.x and 3.x
+    kernel = median_kernel(5)
+
+    # Verify kernel was created
+    assert kernel is not None
+    assert isinstance(kernel, triton.runtime.jit.JITFunction)
 
 
 def test_median_filter_edge_cases():
